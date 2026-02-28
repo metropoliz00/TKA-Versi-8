@@ -6,6 +6,7 @@ import StudentSurvey from './components/StudentSurvey';
 import AdminDashboard from './components/AdminDashboard';
 import { api } from './services/api';
 import { useAlert } from './context/AlertContext';
+import { Analytics } from '@vercel/analytics/react';
 
 type ViewState = 'system_check' | 'login' | 'confirm' | 'exam' | 'survey_confirm' | 'survey' | 'result' | 'admin';
 
@@ -433,6 +434,7 @@ function App() {
   if (view === 'system_check') {
       const isOffline = sysInfo.status === 'Offline';
       return (
+        <>
         <div className="min-h-screen relative flex items-center justify-center p-4 font-sans fade-in overflow-hidden" onClick={enterFullscreen}>
             {/* Background Image Layer with 60% Opacity */}
             <div 
@@ -490,6 +492,8 @@ function App() {
                 <p className="text-center text-[10px] text-slate-400 mt-6">Klik "LANJUTKAN" untuk masuk ke halaman Login.</p>
             </div>
         </div>
+        <Analytics />
+        </>
       );
   }
 
@@ -525,11 +529,12 @@ function App() {
                 </div>
                 <footer className="absolute bottom-4 text-slate-400 text-xs font-bold tracking-wide z-10">@2026 | Dev. MeyGa Team TKA CBT System</footer>
             </div>
+            <Analytics />
         </>
     );
   }
 
-  if (view === 'admin' && currentUser) { return <AdminDashboard user={currentUser} onLogout={handleLogout} />; }
+  if (view === 'admin' && currentUser) { return (<><AdminDashboard user={currentUser} onLogout={handleLogout} /><Analytics /></>); }
 
   if (view === 'confirm') {
     return (
@@ -640,12 +645,14 @@ function App() {
                 </div>
                 <footer className="bg-slate-50 border-t p-3 text-center text-xs text-gray-500">@2026 | Dev. MeyGa Team TKA CBT System</footer>
             </div>
+            <Analytics />
         </>
     );
   }
 
   if (view === 'exam' && selectedExam && currentUser) {
     return (
+      <>
       <StudentExam 
         exam={selectedExam}
         questions={questions}
@@ -656,6 +663,8 @@ function App() {
         onFinish={handleFinishExam}
         onExit={handleLogout}
       />
+      <Analytics />
+      </>
     );
   }
 
@@ -683,17 +692,21 @@ function App() {
                     <button onClick={handleStartSurvey} className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3.5 rounded-full shadow-lg shadow-purple-200 transition-all mt-8 flex justify-center items-center">Mulai Survey</button>
                 </div>
             </div>
+            <Analytics />
         </div>
     );
   }
 
   if (view === 'survey' && currentUser && activeSurveyType) {
       return (
+          <>
           <StudentSurvey 
               user={currentUser} 
               surveyType={activeSurveyType} 
               onFinish={handleFinishSurvey} 
           />
+          <Analytics />
+          </>
       );
   }
 
@@ -707,15 +720,19 @@ function App() {
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 mb-8"><p className="text-xs text-slate-400 uppercase font-bold mb-1">Mata Ujian</p><p className="font-bold text-indigo-700">{selectedExam?.nama_ujian}</p></div>
                 <button onClick={handleLogout} className="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-xl transition shadow-xl transform hover:-translate-y-1">KEMBALI KE HALAMAN LOGIN</button>
             </div>
+            <Analytics />
         </div>
     );
   }
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-slate-50 gap-4 font-sans">
-        <div className="relative"><div className="w-16 h-16 border-4 border-indigo-200 rounded-full"></div><div className="w-16 h-16 border-4 border-indigo-600 rounded-full border-t-transparent animate-spin absolute inset-0"></div></div>
-        <p className="text-slate-400 font-medium animate-pulse text-sm tracking-wider">MEMUAT SISTEM...</p>
-    </div>
+    <>
+      <div className="h-screen flex flex-col items-center justify-center bg-slate-50 gap-4 font-sans">
+          <div className="relative"><div className="w-16 h-16 border-4 border-indigo-200 rounded-full"></div><div className="w-16 h-16 border-4 border-indigo-600 rounded-full border-t-transparent animate-spin absolute inset-0"></div></div>
+          <p className="text-slate-400 font-medium animate-pulse text-sm tracking-wider">MEMUAT SISTEM...</p>
+      </div>
+      <Analytics />
+    </>
   );
 }
 
