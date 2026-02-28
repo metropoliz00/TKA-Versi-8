@@ -5,7 +5,7 @@ import { User, Exam, QuestionWithOptions, QuestionRow, SchoolSchedule } from '..
 let savedUrl = localStorage.getItem('cbt_gas_url');
 if (savedUrl === 'undefined' || savedUrl === 'null') savedUrl = null;
 
-let GAS_EXEC_URL = savedUrl || import.meta.env.VITE_GAS_URL || "https://script.google.com/macros/s/AKfycbzBoEP0rpV5FlLcVRh8TVJk1gPmfu-qagsokpwiinf2r26Z5urhGg62RD23o1fY6pm2wQ/exec";
+let GAS_EXEC_URL = savedUrl || import.meta.env.VITE_GAS_URL || "https://script.google.com/macros/s/AKfycbyukdu8mBkBik347jKWcjp3wC1FtlY-RvPpepYOOzwGSyUAUdm6ktV2jo0VWNU8EmXMXQ/exec";
 
 export const updateGasUrl = (newUrl: string) => {
     if (!newUrl || newUrl === 'undefined' || newUrl === 'null') return;
