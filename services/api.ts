@@ -140,19 +140,19 @@ export const api = {
     
     if (result && result.success && result.user) {
         return {
-            id: result.user.username,
-            username: result.user.username,
-            role: result.user.role,
-            nama_lengkap: result.user.fullname,
-            jenis_kelamin: result.user.gender, 
-            kelas_id: result.user.school,
-            kecamatan: result.user.kecamatan, 
-            active_exam: result.user.active_exam, 
-            session: result.user.session,
+            id: result.user.username || result.user.id || '',
+            username: result.user.username || '',
+            role: result.user.role || 'siswa',
+            nama_lengkap: result.user.fullname || result.user.nama_lengkap || '',
+            jenis_kelamin: result.user.gender || result.user.jenis_kelamin || 'L', 
+            kelas_id: result.user.school || result.user.kelas_id || '',
+            kecamatan: result.user.kecamatan || '', 
+            active_exam: result.user.active_exam || '', 
+            session: result.user.session || '',
             photo_url: formatGoogleDriveUrl(result.user.photo_url),
-            id_sekolah: result.user.id_sekolah,
-            id_gugus: result.user.id_gugus,
-            id_kecamatan: result.user.id_kecamatan
+            id_sekolah: result.user.id_sekolah || '',
+            id_gugus: result.user.id_gugus || '',
+            id_kecamatan: result.user.id_kecamatan || ''
         };
     }
     
@@ -290,10 +290,10 @@ export const api = {
     return data.map((q: any, i: number) => ({
         id: q.id || `Q${i+1}`,
         exam_id: subject,
-        text_soal: q.text || "Pertanyaan tanpa teks",
-        tipe_soal: q.type || 'PG',
-        bobot_nilai: 10,
-        gambar: q.image || undefined,
+        text_soal: q.text || q.text_soal || "Pertanyaan tanpa teks",
+        tipe_soal: q.type || q.tipe_soal || 'PG',
+        bobot_nilai: q.bobot || q.bobot_nilai || 10,
+        gambar: q.image || q.gambar || undefined,
         keterangan_gambar: q.keterangan_gambar || undefined, // Map caption
         options: Array.isArray(q.options) ? q.options.map((o: any, idx: number) => ({
             id: o.id || `opt-${i}-${idx}`,
@@ -312,7 +312,7 @@ export const api = {
       return data.map((q: any, i: number) => ({
           id: q.id || `S${i+1}`,
           exam_id: surveyType,
-          text_soal: q.text,
+          text_soal: q.text || q.text_soal || "Pertanyaan tanpa teks",
           tipe_soal: 'LIKERT',
           bobot_nilai: 0,
           options: Array.isArray(q.options) ? q.options.map((o: any, idx: number) => ({
@@ -329,14 +329,37 @@ export const api = {
   },
 
   getSurveyRecap: async (surveyType: string): Promise<any[]> => {
-      return await callBackend('adminGetSurveyRecap', surveyType);
+      const res = await callBackend('adminGetSurveyRecap', surveyType);
+      if (!Array.isArray(res)) return [];
+      return res.map((r: any) => ({
+          ...r,
+          nama: r.fullname || r.nama || '',
+          sekolah: r.school || r.sekolah || '',
+          kecamatan: r.kecamatan || '',
+          id_sekolah: r.id_sekolah || '',
+          id_gugus: r.id_gugus || '',
+          id_kecamatan: r.id_kecamatan || ''
+      }));
   },
 
   // --- ADMIN CRUD ---
   getRawQuestions: async (subject: string): Promise<QuestionRow[]> => {
       const result = await callBackend('getRawQuestions', subject);
       if (Array.isArray(result)) {
-          return result;
+          return result.map((q: any) => ({
+              ...q,
+              id: q.id || '',
+              text_soal: q.text || q.text_soal || '',
+              tipe_soal: q.type || q.tipe_soal || 'PG',
+              gambar: q.image || q.gambar || '',
+              keterangan_gambar: q.keterangan_gambar || '',
+              opsi_a: q.opsi_a || '',
+              opsi_b: q.opsi_b || '',
+              opsi_c: q.opsi_c || '',
+              opsi_d: q.opsi_d || '',
+              kunci_jawaban: q.kunci_jawaban || '',
+              bobot: q.bobot || 10
+          }));
       }
       return [];
   },
@@ -362,9 +385,19 @@ export const api = {
       if (Array.isArray(users)) {
           return users.map((u: any) => ({
               ...u,
+              id: u.username || u.id || '',
+              username: u.username || '',
+              password: u.password || '',
+              role: u.role || 'siswa',
               nama_lengkap: u.fullname || u.nama_lengkap || '',
               jenis_kelamin: u.gender || u.jenis_kelamin || 'L',
               kelas_id: u.school || u.kelas_id || '',
+              kecamatan: u.kecamatan || '',
+              active_exam: u.active_exam || '',
+              session: u.session || '',
+              id_sekolah: u.id_sekolah || '',
+              id_gugus: u.id_gugus || '',
+              id_kecamatan: u.id_kecamatan || '',
               photo_url: formatGoogleDriveUrl(u.photo_url)
           }));
       }
@@ -432,7 +465,11 @@ export const api = {
           sekolah: r.school || r.sekolah || '',
           mapel: r.subject || r.mapel || '',
           durasi: r.duration || r.durasi || '',
-          nilai: r.score !== undefined ? r.score : (r.nilai !== undefined ? r.nilai : 0)
+          nilai: r.score !== undefined ? r.score : (r.nilai !== undefined ? r.nilai : 0),
+          kecamatan: r.kecamatan || '',
+          id_sekolah: r.id_sekolah || '',
+          id_gugus: r.id_gugus || '',
+          id_kecamatan: r.id_kecamatan || ''
       }));
   },
 
@@ -468,9 +505,19 @@ export const api = {
       if (data && Array.isArray(data.allUsers)) {
           data.allUsers = data.allUsers.map((u: any) => ({
               ...u,
+              id: u.username || u.id || '',
+              username: u.username || '',
+              password: u.password || '',
+              role: u.role || 'siswa',
               nama_lengkap: u.fullname || u.nama_lengkap || '',
               jenis_kelamin: u.gender || u.jenis_kelamin || 'L',
               kelas_id: u.school || u.kelas_id || '',
+              kecamatan: u.kecamatan || '',
+              active_exam: u.active_exam || '',
+              session: u.session || '',
+              id_sekolah: u.id_sekolah || '',
+              id_gugus: u.id_gugus || '',
+              id_kecamatan: u.id_kecamatan || '',
               photo_url: formatGoogleDriveUrl(u.photo_url)
           }));
       }

@@ -34,6 +34,8 @@ const RekapTab = ({ students, currentUser }: { students: any[], currentUser: Use
                     nama: d.fullname || d.nama || '-',
                     sekolah: d.school || d.sekolah || '-',
                     kecamatan: d.kecamatan || userMap[d.username]?.kecamatan || '-',
+                    id_sekolah: d.id_sekolah || userMap[d.username]?.id_sekolah || '',
+                    id_kecamatan: d.id_kecamatan || userMap[d.username]?.id_kecamatan || '',
                     nilai_bi: '-',
                     nilai_mtk: '-',
                     durasi_bi: '-',

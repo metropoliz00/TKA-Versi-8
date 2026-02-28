@@ -62,6 +62,8 @@ const RankingTab = ({ students, currentUser }: { students: any[], currentUser: U
                     nama: d.fullname || d.nama || '-',
                     sekolah: d.school || d.sekolah || '-',
                     kecamatan: d.kecamatan || userMap[d.username]?.kecamatan || '-',
+                    id_sekolah: d.id_sekolah || userMap[d.username]?.id_sekolah || '',
+                    id_kecamatan: d.id_kecamatan || userMap[d.username]?.id_kecamatan || '',
                     score_bi: null,
                     score_mtk: null
                 });
